@@ -17,6 +17,17 @@ void on_center_button() {
 	}
 }
 
+void screen() {
+    // loop forever
+    while (true) {
+        lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
+        pros::lcd::print(0, "x: %f", pose.x); // print the x position
+        pros::lcd::print(1, "y: %f", pose.y); // print the y position
+        pros::lcd::print(2, "heading: %f", pose.theta); // print the heading
+        pros::delay(10);
+    }
+}
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -25,9 +36,19 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
+	chassis.calibrate();
+	sylib::initialize();
 
-	pros::lcd::register_btn1_cb(on_center_button);
+	//tasks
+	pros::Task screenTask(screen);
+	//LIGHTS
+	leftDriveLights.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
+  	rightDriveLights.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
+
+	//AUTON SELECTOR
+	//pros::lcd::set_text(1, "Hello PROS User!");
+
+	//pros::lcd::register_btn1_cb(on_center_button);
 }
 
 /**
@@ -59,7 +80,9 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	nothing();
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -75,20 +98,22 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
 
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
+  setLights(0x0fdb35); //green
+  bool last30 = false;
+  std::uint32_t startTime = pros::millis();
+  while (true) {
+    std::uint32_t time = pros::millis();
+    setCata();
+    setWings();
+    setLift();
+    if (time-startTime >= 75000 && last30 != true) {
+      leftDriveLights.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
+      rightDriveLights.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
+      controller.rumble(". . . . .");
+      last30 = true;
+    }
 
-		left_mtr = left;
-		right_mtr = right;
-
-		pros::delay(20);
-	}
+    pros::delay(10); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
+  }
 }

@@ -36,7 +36,7 @@
 
 #include "api.h"
 #include "sylib/sylib.hpp"
-
+#include "okapi/api.hpp"
 /**
  * You should add more #includes here
  */
@@ -73,10 +73,18 @@ void opcontrol(void);
 #endif
 
 #ifdef __cplusplus
+
 /**
  * You can add C++-only headers here
  */
 //#include <iostream>
+#include "subsystemHeaders/chassis.hpp"
+#include "subsystemHeaders/globals.hpp"
+#include "subsystemHeaders/cata.hpp"
+#include "subsystemHeaders/wings.hpp"
+#include "subsystemHeaders/lift.hpp"
+#include "subsystemHeaders/lights.hpp"
+#include "autons.hpp"
 #endif
 
 #endif  // _PROS_MAIN_H_
