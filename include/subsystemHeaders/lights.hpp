@@ -1,3 +1,4 @@
 #include "main.h"
 
-void setLights(int hex);
+void setDriveLights(int hex);
+void setWingLights(int hex);

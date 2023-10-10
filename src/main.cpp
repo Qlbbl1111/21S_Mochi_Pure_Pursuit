@@ -38,6 +38,7 @@ void initialize() {
 	pros::lcd::initialize();
 	chassis.calibrate();
 	sylib::initialize();
+  chassis.setPose(35.407, 60.121, 62.891);
 
 	//tasks
 	pros::Task screenTask(screen);
@@ -97,16 +98,19 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
 
-  setLights(0x0fdb35); //green
+void opcontrol() {
+  setDriveLights(0x0fdb35); //green
   bool last30 = false;
   std::uint32_t startTime = pros::millis();
   while (true) {
     std::uint32_t time = pros::millis();
+
+    driveControl();
     setCata();
     setWings();
     setLift();
+
     if (time-startTime >= 75000 && last30 != true) {
       leftDriveLights.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
       rightDriveLights.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);

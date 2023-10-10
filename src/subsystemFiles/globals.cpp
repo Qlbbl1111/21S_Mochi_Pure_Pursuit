@@ -26,5 +26,7 @@ pros::Imu inertial(21);
 pros::ADIDigitalOut wings('B');
 
 // LIGHTS
-sylib::Addrled leftDriveLights(22,7,52);
-sylib::Addrled rightDriveLights(22,8,52);
+sylib::Addrled leftDriveLights(22,7,42);
+sylib::Addrled rightDriveLights(22,8,43);
+sylib::Addrled leftWingLights(22,3,20);
+sylib::Addrled rightWingLights(22,4,20);

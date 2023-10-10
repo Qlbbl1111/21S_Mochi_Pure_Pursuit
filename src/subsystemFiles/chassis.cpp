@@ -1,6 +1,29 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 
+//Runs a P loop on the drive when the joysticks are released.
+int curve(int input) {
+    double t = 7;
+    return (exp(-(t/10))+exp((abs(input)-100)/10)*(1- exp(-(t/10))))*input;
+}
+
+void driveControl() {
+    double kP = 0.03;
+    if (abs(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)) < 5) {
+        left_side_motors = (0 - left_front_motor.get_position()) * kP;
+    } else {
+        left_front_motor.tare_position();
+        left_side_motors = curve(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+    }
+    
+    if (abs(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) < 5) {
+        right_side_motors = (0 - right_front_motor.get_position()) * kP;
+    } else {
+    right_front_motor.tare_position();
+    right_side_motors = curve(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+    }
+}
+
 lemlib::Drivetrain_t drivetrain {
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors

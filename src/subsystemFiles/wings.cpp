@@ -18,8 +18,11 @@ void wingsOn() {
 void setWings() {
   if (toggle) {
     wings.set_value(true);
+    leftWingLights.gradient(0xed310c, 0xeded0c);
+    rightWingLights.gradient(0xed310c, 0xeded0c);
   } else {
     wings.set_value(false);
+    setWingLights(0x000000);
   }
 
   if (wingsButton.isPressed()) {
