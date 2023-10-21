@@ -31,7 +31,7 @@ lemlib::Drivetrain_t drivetrain {
     4.125, // wheel diameter
     300 // wheel rpm
 };
- 
+
 // odometry struct
 lemlib::OdomSensors_t sensors {
     nullptr, // vertical tracking wheel 1

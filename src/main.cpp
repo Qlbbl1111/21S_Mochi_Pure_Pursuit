@@ -38,7 +38,6 @@ void initialize() {
 	pros::lcd::initialize();
 	chassis.calibrate();
 	sylib::initialize();
-  chassis.setPose(35.407, 60.121, 62.891);
 
 	//tasks
 	pros::Task screenTask(screen);
@@ -82,7 +81,46 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	nothing();
+  wings.set_value(false);
+  chassis.setPose(-32, -62, 90);
+  //drive back to match load
+  chassis.moveTo(-48, -62, 1000);
+  chassis.turnTo(-23, -48, 500);
+  pros::delay(500);
+  //match load
+  setCataMotors(75);
+  pros::delay(35000); //35000
+  setCataMotors(0);
+  //drive to other side
+  chassis.turnTo(0, -60, 500);
+  chassis.moveTo(0, -60, 1000);
+  chassis.turnTo(35, -60, 200);
+  chassis.moveTo(35, -60, 1000);
+  chassis.turnTo(35, -46, 500);
+  //get near the goal
+  chassis.follow("drivetoscore.txt",2000, 15);
+  //deploy wings and run into left side of goal
+  wings.set_value(true);
+  chassis.follow("score1.txt",3000, 15, false, 127);
+  wings.set_value(false);
+  //back up to middle ~20in infront of goal
+  chassis.moveTo(12, 0, 2000);
+  //deploy wings and run into middle of goal
+  wings.set_value(true);
+  chassis.moveTo(45, 0, 2000);
+  wings.set_value(false);
+  //back up to right side ~20in infront of goal
+  chassis.moveTo(9, 16, 2000);
+  //deploy wings and run into right side of goal
+  wings.set_value(true);
+  chassis.follow("score2.txt",3000, 15, false, 127);
+  //back up to right side ~20in infront of goal
+  wings.set_value(false);
+  chassis.moveTo(12, 16, 1000);
+  //deploy wings and run into right side of goal again
+  wings.set_value(true);
+  chassis.moveTo(45, 16, 2000);
+  wings.set_value(false);
 }
 
 /**
