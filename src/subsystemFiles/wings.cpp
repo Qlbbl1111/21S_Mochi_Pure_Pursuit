@@ -9,10 +9,13 @@ bool latch = false;
 
 void wingsOff() {
   wings.set_value(false);
+  setWingLights(0x000000);
 }
 
 void wingsOn() {
   wings.set_value(true);
+  leftWingLights.gradient(0xed310c, 0xeded0c);
+  rightWingLights.gradient(0xed310c, 0xeded0c);
 }
 
 void setWings() {
