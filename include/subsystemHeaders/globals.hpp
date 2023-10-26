@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pros/adi.hpp"
 
 // DRIVETRAIN
 extern pros::Motor left_front_motor;
@@ -21,9 +22,11 @@ extern pros::Controller controller;
 
 // SENSORS
 extern pros::Imu inertial;
+extern pros::ADIDigitalIn kickerLimit;
 
 // PNUEMATICS
 extern pros::ADIDigitalOut wings;
+extern pros::ADIDigitalOut liftLock;
 
 // LIGHTS
 extern sylib::Addrled leftDriveLights;

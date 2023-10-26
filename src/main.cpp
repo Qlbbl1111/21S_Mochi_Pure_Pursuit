@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "pros/rtos.hpp"
 
 /**
  * A callback function for LLEMU's center button.
@@ -80,46 +81,67 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+ bool kickerDown = false;
 void autonomous() {
   wingsOff();
-  chassis.setPose(-32, -62, 90);
+  chassis.setPose(-34, -64.5, 0);
+
+  chassis.moveTo(-62,-24,1300);
+  //chassis.moveTo(-60,-45,1000);
+  //pros::delay(500);
+  //chassis.moveTo(-60,-27,1200);
+  pros::delay(1000);
+  //chassis.follow("scorepre.txt",2500, 10);
+  //chassis.follow("scorepre.txt",2500, 10, true);
   //drive back to match load
-  chassis.moveTo(-48, -62, 1000);
-  chassis.turnTo(-23, -48, 500);
+  chassis.moveTo(-56,-52,1000);
+  pros::delay(500);
+  chassis.turnTo(0, -24, 700);
   pros::delay(500);
   //match load
-  setCataMotors(75);
-  pros::delay(35000); //35000
+  setCataMotors(80);
+  pros::delay(30000); //35000
   setCataMotors(0);
+  pros::delay(500);
+  while (!kickerDown) {
+    if (!kickerLimit.get_value() and !kickerDown) {
+      setCataMotors(80);
+    } else {
+    kickerDown = true;
+    setCataMotors(0);
+    }
+    pros::delay(10);
+  }
+
   //drive to other side
-  chassis.turnTo(0, -65, 1000);
-  chassis.moveTo(0, -60, 1500);
-  chassis.turnTo(35, -60, 1000);
-  chassis.moveTo(35, -60, 2000);
-  chassis.turnTo(35, -46, 1000);
+  chassis.turnTo(-32, -58, 1000);
+  chassis.moveTo(-35, -54, 1000);
+  chassis.turnTo(0, -56, 1000);
+  chassis.moveTo(35, -56, 2000);
+  chassis.turnTo(35, -46, 500);
   //get near the goal
-  chassis.follow("drivetoscore.txt",2500, 15);
+  chassis.follow("drivetoscore.txt",2000, 15);
   //deploy wings and run into left side of goal
   wingsOn();
   chassis.follow("score1.txt",3000, 15, false, 127);
   wingsOff();
   //back up to middle ~20in infront of goal
-  chassis.moveTo(12, 0, 2000);
+  chassis.moveTo(10, 0, 2000);
   //deploy wings and run into middle of goal
   wingsOn();
   chassis.moveTo(45, 0, 2000);
   wingsOff();
   //back up to right side ~20in infront of goal
-  chassis.moveTo(9, 16, 2000);
+  chassis.follow("backup1.txt",2000, 15, true, 127);
   //deploy wings and run into right side of goal
   wingsOn();
   chassis.follow("score2.txt",3000, 15, false, 127);
   //back up to right side ~20in infront of goal
   wingsOff();
-  chassis.moveTo(12, 16, 1000);
+  chassis.moveTo(12, 12, 1000);
   //deploy wings and run into right side of goal again
   wingsOn();
-  chassis.moveTo(45, 16, 2000);
+  chassis.moveTo(45, 12, 2000);
   wingsOff();
 }
 
@@ -148,6 +170,7 @@ void opcontrol() {
     setCata();
     setWings();
     setLift();
+    setLock();
 
     if (time-startTime >= 75000 && last30 != true) {
       leftDriveLights.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);

@@ -18,7 +18,7 @@ void setCataMotors(int value) {
       cata_b = 0;
   }
 }
-
+bool kickerDown2 = false;
 void setCata() {
   cata_a.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   cata_b.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -52,15 +52,23 @@ void setCata() {
   //Cata Control (L1 for press, L2 for Toggle)
   if (toggleCata ^ controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ) {
     //set motors for toggle or press but Dont allow toggle and press
-    setCataMotors(75);
+    setCataMotors(80);
+    kickerDown2 = false;
+
   } else {
     //turn off if neither
-    setCataMotors(0);
+
+      if (!kickerLimit.get_value() && !kickerDown2) {
+        setCataMotors(80);
+      } else {
+      kickerDown2 = true;
+      setCataMotors(0);
+  }
   }
 
+}
   //Over Draw Protection
   //std::cout << "Motor Current Draw: " << cata_a.get_current_draw();
   //if (cata_a.get_current_draw() > 1550) {
    //   stopCata = true;
    // } 
-}
